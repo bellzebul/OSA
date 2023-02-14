@@ -152,7 +152,7 @@ diagrams_data <- function(questions, questions_id, marks_frame, vec_len, role){
     
   }else if (role == 'lecture'){
     
-    n2 = as.vector(n2)
+    n2 = vector(mode = 'numeric')
     n3 = as.vector(n2)
     n4 = as.vector(n2)
     n5 = as.vector(n2)
@@ -164,32 +164,32 @@ diagrams_data <- function(questions, questions_id, marks_frame, vec_len, role){
     
     i <-  1
     while (i <= nrow(marks_frame)){
-      if (marks_frame$lecture.questions_ids[i] == 2){
-        n2 <- append(n2, marks_frame$lecture.marks[i])
+      if (marks_frame$questions_ids[i] == 2){
+        n2 <- append(n2, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 3){
-        n3 <- append(n3, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 3){
+        n3 <- append(n3, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 4){
-        n4 <- append(n4, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 4){
+        n4 <- append(n4, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 5){
-        n5 <- append(n5, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 5){
+        n5 <- append(n5, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 7){
-        n7 <- append(n7, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 7){
+        n7 <- append(n7, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 8){
-        n8 <- append(n8, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 8){
+        n8 <- append(n8, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 9){
-        n9 <- append(n9, marks_frame$lecture.marks[i])
+      }else if (marks_frame$questions_ids[i] == 9){
+        n9 <- append(n9, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$lecture.questions_ids[i] == 1 ||
-                marks_frame$lecture.questions_ids[i] == 10 ||
-                marks_frame$lecture.questions_ids[i] == 11 ||
-                marks_frame$lecture.questions_ids[i] == 12 ||
-                marks_frame$lecture.questions_ids[i] == 20)
+      }else if (marks_frame$questions_ids[i] == 1 ||
+                marks_frame$questions_ids[i] == 10 ||
+                marks_frame$questions_ids[i] == 11 ||
+                marks_frame$questions_ids[i] == 12 ||
+                marks_frame$questions_ids[i] == 20)
         i = i + 1
     }
     
@@ -213,30 +213,30 @@ diagrams_data <- function(questions, questions_id, marks_frame, vec_len, role){
     n12 = as.vector(n1)
     i <-  1
     while (i <= nrow(marks_frame)){
-      if (marks_frame$practice.questions_ids[i] == 2){
-        n2 <- append(n2, marks_frame$practice.marks[i])
+      if (marks_frame$questions_ids[i] == 2){
+        n2 <- append(n2, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 1){
-        n1 <- append(n1, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 1){
+        n1 <- append(n1, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 3){
-        n3 <- append(n3, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 3){
+        n3 <- append(n3, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 4){
-        n4 <- append(n4, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 4){
+        n4 <- append(n4, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 6){
-        n6 <- append(n6, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 6){
+        n6 <- append(n6, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 8){
-        n8 <- append(n8, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 8){
+        n8 <- append(n8, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 9){
-        n9 <- append(n9, marks_frame$practice.marks[i])
+      }else if (marks_frame$questions_ids[i] == 9){
+        n9 <- append(n9, marks_frame$marks[i])
         i = i + 1
-      }else if (marks_frame$practice.questions_ids[i] == 10 ||
-                marks_frame$practice.questions_ids[i] == 11 ||
-                marks_frame$practice.questions_ids[i] == 12)
+      }else if (marks_frame$questions_ids[i] == 10 ||
+                marks_frame$questions_ids[i] == 11 ||
+                marks_frame$questions_ids[i] == 12)
         i = i + 1
       
     }
@@ -256,10 +256,10 @@ diagrams_data <- function(questions, questions_id, marks_frame, vec_len, role){
 }
 
 
-create_dataset <- function(teacher_id, faculty, connec){
-  role <- dbGetQuery(connec, glue("SELECT type from {faculty}.teachers
-                         WHERE id = {teacher_id}"))
-  
+create_dataset <- function(teacher_id, faculty, connec, role){
+  # role <- dbGetQuery(connec, glue("SELECT type from {faculty}.teachers
+  #                        WHERE id = {teacher_id}"))
+  # 
   if (role == "both"){
     questions_id <- dbGetQuery(connec,
                                "SELECT id FROM public.questions where type != 'open'")
@@ -278,41 +278,89 @@ create_dataset <- function(teacher_id, faculty, connec){
   vec_len <- nrow(votes_id_list)
   
   all_marks_json <- vector(mode = "list", length = vec_len)
-  all_marks_json <- dbGetQuery(connec,
-                               glue("SELECT results FROM {faculty}.votes
-                               where teacher_id = {teacher_id}"))
-  
-  
-  vote <- fromJSON(all_marks_json[1,])
-  vote$lecture$marks <- append(vote$lecture$marks, 20)
-  vote$lecture$questions_ids <- append(vote$lecture$questions_ids, 20)
-  marks_frame <- as.data.frame(vote)
-  
-  i <- 2
-  while (i <= nrow(all_marks_json)) {
-    temp <- fromJSON(all_marks_json[i,])
-    temp$lecture$marks <- append(temp$lecture$marks, 20)
-    temp$lecture$questions_ids <- append(temp$lecture$questions_ids, 20)
-    temp_frame <- as.data.frame(temp)
-    marks_frame <- rbind(marks_frame, temp_frame)
-    i = i + 1
+  if (role == 'practice'){
+    all_marks_json <- dbGetQuery(connec,
+                                 glue("SELECT results FROM {faculty}.votes
+                               where teacher_id = {teacher_id} AND results ?& array['practice']"))
+    vote <- fromJSON(all_marks_json[1,])
+    # vote$lecture$marks <- append(vote$lecture$marks, 20)
+    # vote$lecture$questions_ids <- append(vote$lecture$questions_ids, 20)
+    marks_frame <- as.data.frame(vote$practice)
+
+    names(marks_frame) <- c("marks", 'questions_ids')
+    
+    i <- 2
+    while (i <= nrow(all_marks_json)) {
+      temp <- fromJSON(all_marks_json[i,])
+      temp <- temp$practice
+      
+      temp_frame <- as.data.frame(temp)
+      marks_frame <- rbind(marks_frame, temp_frame)
+      i = i + 1
+    }
+    
+  }else if (role == 'lecture'){
+    all_marks_json <- dbGetQuery(connec,
+                                 glue("SELECT results FROM {faculty}.votes
+                               where teacher_id = {teacher_id} AND results ?& array['lecture']"))
+    vote <- fromJSON(all_marks_json[1,])
+    marks_frame <- as.data.frame(vote$lecture)
+ 
+    names(marks_frame) <- c("marks", 'questions_ids')
+
+    i <- 2
+    while (i <= nrow(all_marks_json)) {
+      temp <- fromJSON(all_marks_json[i,])
+      temp <- temp$lecture
+
+      temp_frame <- as.data.frame(temp)
+      marks_frame <- rbind(marks_frame, temp_frame)
+      i = i + 1
+    }
+    
+    
+  }else if (role == 'both'){
+    all_marks_json <- dbGetQuery(connec,
+                                 glue("SELECT results FROM {faculty}.votes
+                               where teacher_id = {teacher_id} AND results ?& array['lecture', 'practice']"))
+    
+    
+    vote <- fromJSON(all_marks_json[1,])
+    vote$lecture$marks <- append(vote$lecture$marks, 20)
+    vote$lecture$questions_ids <- append(vote$lecture$questions_ids, 20)
+    marks_frame <- as.data.frame(vote)
+
+    i <- 2
+    while (i <= nrow(all_marks_json)) {
+      temp <- fromJSON(all_marks_json[i,])
+      temp$lecture$marks <- append(temp$lecture$marks, 20)
+      temp$lecture$questions_ids <- append(temp$lecture$questions_ids, 20)
+      temp_frame <- as.data.frame(temp)
+      marks_frame <- rbind(marks_frame, temp_frame)
+      i = i + 1
+    }
   }
+    
+  
+  
   diagrams_data(questions, questions_id, marks_frame, vec_len, role)
   
 }
 
 
 check_option <- function(connec){
-  args = commandArgs(trailingOnly=TRUE)
-  teacher <- args[1]
-  faculty <- args[2]
-  # teacher = "Бакун Володимир Володимирович"
-  # faculty = "fbme"
+  # args = commandArgs(trailingOnly=TRUE)
+  # teacher <- args[1]
+  # faculty <- args[2]
+  # role <- args[3]
+  teacher = "Бакун Володимир Володимирович"
+  faculty = "fbme"
+  role = 'lecture'
   teacher_id <- dbGetQuery(connec,
                            glue("SELECT id from {faculty}.teachers
                          WHERE full_name like '%{teacher}%'"))
   
-  create_dataset(teacher_id, faculty, connec)
+  create_dataset(teacher_id, faculty, connec, role)
 }
 
 
