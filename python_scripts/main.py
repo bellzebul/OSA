@@ -40,7 +40,7 @@ def set_image(save_prepod, akadem_kind, alternative_way, current_teacher, questi
 
     draw.rectangle((78, 78, 392, 432), fill='black')
     backgrond.paste(photo, (80, 80))
-    # backgrond.show()
+
     headline = ImageFont.truetype('/Users/bellzebull/Documents/КПИ/OSA/fonts/NeueMachina-Bold.ttf', size=27)
     headline_1 = ImageFont.truetype('/Users/bellzebull/Documents/КПИ/OSA/fonts/NeueMachina-Medium.ttf', size=17)
     prsnt = ImageFont.truetype('/Users/bellzebull/Documents/КПИ/OSA/fonts/KyivTypeSans-Bold.ttf', size=40)
@@ -287,24 +287,9 @@ def amount_of_students(cursor) -> int:
     return potential_amount_votes
 
 
-def getting_data() -> None:
-    con = psycopg2.connect(
-        database=database_name,
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
-    cursor = con.cursor()
-    cursor.execute(f"SELECT * FROM {faculty}.teachers")
-    rows = cursor.fetchall()
-
-    teachers: dict = {}
-    for row in rows:
-        teachers.update({row[1]: [row[0], row[2]]})
-
-    '''Removing invalid role rows (when role in teachers table not match the role in json from results column in votes
-    table) '''
+def getting_data(con, cursor, teachers, role) -> None:
+    # Removing invalid role rows (when role in teachers table not match the role in json from results column in votes
+    # table)
     if teachers[current_teacher][1] == 'practice':
         cursor.execute(
             f"DELETE FROM {faculty}.votes WHERE teacher_id = {teachers[current_teacher][0]} AND results ?& array['lecture']")
@@ -314,7 +299,7 @@ def getting_data() -> None:
     con.commit()
 
     # Running Rscript to get diagrams
-    subprocess.run(['Rscript', pass_to_Rfile, current_teacher, faculty])
+    # subprocess.run(['Rscript', pass_to_Rfile, current_teacher, faculty, role])
 
     questions: dict = {'1': 'Дотримання РСО',
                        '2': 'Зручність\nкомунікації',
@@ -328,15 +313,33 @@ def getting_data() -> None:
                        '10': 'опитуваних хочуть,\nщоб викладач\nпродовжив викладати',
                        '11': 'вважають, що викладач\nдотримується академічної\nдоброчесності',
                        '12': 'мали можливість вибору\nальтернативного способу\nотримання знань і балів', }
+    if role == 'both':
+        cursor.execute(
+            f"SELECT results FROM {faculty}.votes WHERE"
+            f" teacher_id = {teachers[current_teacher][0]} AND results?& array['lecture', 'practice']"
+        )
+    elif role == 'lecture':
+        cursor.execute(
+            f"SELECT results FROM {faculty}.votes WHERE"
+            f" teacher_id = {teachers[current_teacher][0]} AND results?& array['lecture']"
+        )
+    elif role == 'practice':
+        cursor.execute(
+            f"SELECT results FROM {faculty}.votes WHERE"
+            f" teacher_id = {teachers[current_teacher][0]} AND results?& array['practice']"
+        )
 
-    cursor.execute(f"SELECT results FROM {faculty}.votes WHERE teacher_id = {teachers[current_teacher][0]}")
+
+
     rows = cursor.fetchall()
     votes = []
     for row in rows:
         votes.append(row)
 
+    print(votes)
+
     marks: list[list[int]] = []
-    if teachers[current_teacher][1] != 'lecture':
+    if role != 'lecture':
         for i in range(len(votes)):
             temp = [votes[i][0]['practice']['marks'][-j] for j in range(3, 0, -1)]
             marks.append(temp)
@@ -354,17 +357,47 @@ def getting_data() -> None:
 
     n_students = amount_of_students(cursor)
 
-    con.close()
-
-    if teachers[current_teacher][1] == 'both':
+    if role == 'both':
         set_image(save_prepod, akadem_kind, alternative_way, current_teacher, questions, faculty, len(votes), 'both',
                   n_students)
-    elif teachers[current_teacher][1] == 'lecture':
+    elif role == 'lecture':
         set_image(save_prepod, akadem_kind, alternative_way, current_teacher, questions, faculty, len(votes), 'lecture',
                   n_students)
-    elif teachers[current_teacher][1] == 'practice':
+    elif role == 'practice':
         set_image(save_prepod, akadem_kind, alternative_way, current_teacher, questions, faculty, len(votes),
                   'practice', n_students)
 
 
-getting_data()
+def set_role() -> None:
+    """This function will check teacher's role and choose which picture to create"""
+    con = psycopg2.connect(
+        database=database_name,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    cursor = con.cursor()
+    cursor.execute(f"SELECT * FROM {faculty}.teachers")
+    rows = cursor.fetchall()
+
+    teachers: dict = {}
+    for row in rows:
+        teachers.update({row[1]: [row[0], row[2]]})
+
+    if teachers[current_teacher][1] == 'practice':
+        role = 'practice'
+        getting_data(con, cursor, teachers, role)
+    elif teachers[current_teacher][1] == 'lecture':
+        role = 'lecture'
+        getting_data(con, cursor, teachers, role)
+    elif teachers[current_teacher][1] == 'both':
+
+        getting_data(con, cursor, teachers, 'practice')
+        getting_data(con, cursor, teachers, 'lecture')
+        getting_data(con, cursor, teachers, 'both')
+
+    con.close()
+
+
+set_role()
