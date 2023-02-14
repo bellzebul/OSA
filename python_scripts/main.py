@@ -394,8 +394,8 @@ def set_role() -> None:
     elif teachers[current_teacher][1] == 'both':
 
         getting_data(con, cursor, teachers, 'practice')
-        # getting_data(con, cursor, teachers, 'lecture')
-        # getting_data(con, cursor, teachers, 'both')
+        getting_data(con, cursor, teachers, 'lecture')
+        getting_data(con, cursor, teachers, 'both')
 
     con.close()
 
